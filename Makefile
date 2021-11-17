@@ -192,4 +192,24 @@ clean:
 #######################################
 -include $(wildcard $(BUILD_DIR)/*.d)
 
+
+#Use The Tool By Openocd Download the Project
+OPENOCD := openocd -f interface/cmsis-dap.cfg \
+	-c 'transport select swd' \
+	-f target/stm32f1x.cfg 
+# download your program
+flash: all
+	$(OPENOCD) -c init \
+		-c 'reset halt' \
+		-c 'flash write_image erase $(BUILD_DIR)/$(TARGET).elf' \
+		-c 'reset run' \
+		-c exit
+
+update:
+	openocd -f openocd.cfg -c init -c halt \	
+	-c "program $(BUILD_DIR)/$(TARGET).hex verify reset exit"
+			
+reset:
+	openocd -f openocd.cfg -c init -c halt -reset -c shutdown
+
 # *** EOF ***
