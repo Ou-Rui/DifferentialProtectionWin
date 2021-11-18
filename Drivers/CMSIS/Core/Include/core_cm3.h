@@ -32,7 +32,6 @@
 #define __CORE_CM3_H_GENERIC
 
 #include <stdint.h>
-// #include "stm32f10x_type.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -204,8 +203,6 @@
 /**
   \brief  Union type to access the Application Program Status Register (APSR).
  */
-
-typedef unsigned int uint32_t;
 typedef union
 {
   struct
