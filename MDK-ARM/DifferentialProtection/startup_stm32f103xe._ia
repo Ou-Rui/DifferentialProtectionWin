@@ -1,6 +1,0 @@
---cpu Cortex-M3 -g --apcs=interwork 
--I D:\Document\VScode\DifferentialProtection\MDK-ARM\RTE
--I "D:\Program Files\Keil5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include"
--I "D:\Program Files\Keil5\ARM\PACK\Keil\STM32F1xx_DFP\1.0.5\Device\Include"
---pd "__UVISION_VERSION SETA 514" --pd "_RTE_ SETA 1" --pd "STM32F10X_HD SETA 1"
---list startup_stm32f103xe.lst --xref -o differentialprotection\startup_stm32f103xe.o --depend differentialprotection\startup_stm32f103xe.d "startup_stm32f103xe.s"
