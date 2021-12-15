@@ -21,7 +21,13 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#define GETCHAR_PROTOTYPE int __io_getchar(void)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#define GETCHAR_PROTOTYPE int fgetc(FILE *f)
+#endif /* __GNUC__ */
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -86,6 +92,8 @@ void MX_USART2_UART_Init(void)
 
 }
 
+// UART底层初始化，时钟使能，引脚配置，中断配置
+// 此函数会被HAL_UART_Init()调用
 void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 {
 
@@ -198,7 +206,34 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+/**
+  * 函数功能: 重定向c库函数printf到DEBUG_USARTx
+***/
+PUTCHAR_PROTOTYPE
+{
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch,1,0XFFFF);
+  return ch;
+}
+/**
+  * 函数功能: 重定向c库函数scanf到DEBUG_USARTx
+***/
+GETCHAR_PROTOTYPE
+{
+  int ch;
+  HAL_UART_Receive(&huart2, (uint8_t *)&ch,1,0XFFFF);
+  return ch;
+}
+// vscode中好像一定要有这个，Keil中不用
+int _write(int file, char *ptr, int len)
+{
+    int DataIdx;
 
+    for (DataIdx = 0; DataIdx < len; DataIdx++)
+    {
+        __io_putchar(*ptr++);
+    }
+    return len;
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

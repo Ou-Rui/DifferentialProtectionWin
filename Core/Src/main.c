@@ -46,7 +46,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+// #define RXBUFFERSIZE  256
+// char RxBuffer[RXBUFFERSIZE]; 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -57,7 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int x = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -93,7 +94,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  // char data[]="hello windows!\n";
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -104,6 +105,9 @@ int main(void)
     /* USER CODE END WHILE */
     HAL_Delay(500);           // delay 500ms
     HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
+    printf("hello\n");
+
+    // HAL_UART_Transmit(&huart1, (uint8_t *)data, 15, 0xffff);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
