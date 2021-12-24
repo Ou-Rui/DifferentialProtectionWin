@@ -28,6 +28,9 @@
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #define GETCHAR_PROTOTYPE int fgetc(FILE *f)
 #endif /* __GNUC__ */
+
+uint8_t usart2RxBuffer[USART2_RX_BUFFER_SIZE];
+
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -87,13 +90,15 @@ void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-
+  // 该函数检查USART是否正忙，如果不忙则配置参数、使能中断等操作（教程说放在main()�?
+  // if(HAL_UART_Receive_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE) != HAL_OK)
+  // {
+	//    Error_Handler();
+  // }
   /* USER CODE END USART2_Init 2 */
 
 }
 
-// UART底层初始化，时钟使能，引脚配置，中断配置
-// 此函数会被HAL_UART_Init()调用
 void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 {
 
@@ -234,6 +239,18 @@ int _write(int file, char *ptr, int len)
     }
     return len;
 }
+
+// 每次接收到数据后回调
+// 调用栈：USARTx_IRQHandler -> HAL_UART_IRQHandler -> UART_Receive_IT
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if(huart == &huart2) {
+    // 收到后，立刻回复相同内容
+    HAL_GPIO_WritePin(RS485_RE_GPIO_Port, RS485_RE_Pin, GPIO_PIN_SET);
+		HAL_UART_Transmit_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE);
+    HAL_GPIO_WritePin(RS485_RE_GPIO_Port, RS485_RE_Pin, GPIO_PIN_RESET);
+	}	
+}
+
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
