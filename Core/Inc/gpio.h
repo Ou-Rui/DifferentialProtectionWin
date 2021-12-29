@@ -28,7 +28,7 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "rs485.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */

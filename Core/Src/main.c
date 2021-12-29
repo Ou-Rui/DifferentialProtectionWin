@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "typedef.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,8 +46,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// #define RXBUFFERSIZE  256
-// char RxBuffer[RXBUFFERSIZE]; 
+PublicPara Device;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -108,7 +108,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
     HAL_Delay(500);           // delay 500ms
     HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
-    printf("hello\n");
+    // printf("hello\n");
     // HAL_UART_Transmit(&huart1, (uint8_t *)data, 15, 0xffff);
   }
   /* USER CODE END 3 */
