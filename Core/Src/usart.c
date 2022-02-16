@@ -32,8 +32,8 @@
 usart_task ust;
 
 uint8_t usart2RxBuffer[USART2_RX_BUFFER_SIZE];
-volatile uint8_t rx2Len = 0;     //接收�?帧数据的长度
-volatile uint8_t rx2EndFlag = 0; //�?帧数据接收完成标�?
+volatile uint8_t rx2Len = 0;     //接收帧数据的长度
+volatile uint8_t rx2EndFlag = 0; //帧数据接收完成标志
 
 /* USER CODE END 0 */
 
@@ -243,7 +243,7 @@ int _write(int file, char *ptr, int len)
 }
 
 // 每次接收到数据后回调
-// 调用栈：USARTx_IRQHandler -> HAL_UART_IRQHandler -> UART_Receive_IT
+// 调用栈：USARTx_IRQHandler -> HAL_UART_IRQHandler -> UART_Receive_IT -> HAL_UART_RxCpltCallback
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart == &huart2)

@@ -94,7 +94,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  // char data[]="hello windows!\n";
+  // 该函数检查USART是否正忙，如果不忙则配置参数、使能中断等操作
   HAL_UART_Receive_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE);
   /* USER CODE END 2 */
 
