@@ -58,6 +58,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define TIMER3_PSC (72-1)
+#define TIMER3_PERIOD 10000
+#define USART2_BAUD 115200
 #define RS485_RE_Pin GPIO_PIN_7
 #define RS485_RE_GPIO_Port GPIOD
 #define LED0_Pin GPIO_PIN_5

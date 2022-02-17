@@ -19,13 +19,14 @@
 
 ### 开发日志
 #### TODO
-- 配一个定时器中断
+- 定时器中断中的串口处理
 
 #### 疑问
 - `Judge_Comm_Work1()`中，为什么`Device.BaudRate == 0`属于正常情况
 
 #### 2022/02/17
 - 拆分了modbus_main.c + modbus_function.c
+- timer3实现了10ms中断
 
 #### 2022/02/16
 - 增加了sys.h，用于位操作

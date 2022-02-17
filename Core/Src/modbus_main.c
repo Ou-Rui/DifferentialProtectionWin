@@ -5,8 +5,6 @@
 struct_modbus Recv_MB; // 接收缓冲区
 struct_modbus Send_MB; // 发送缓冲区
 
-
-
 void Buffer_int(void)
 {
     uint8_t i;
