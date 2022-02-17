@@ -21,6 +21,8 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+#include "modbus.h"
+#include "stm32f1xx_hal_usart.h"
 #ifdef __GNUC__
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 #define GETCHAR_PROTOTYPE int __io_getchar(void)
@@ -93,11 +95,8 @@ void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-  // 该函数检查USART是否正忙，如果不忙则配置参数、使能中断等操作(教程说放在main())
-  // if(HAL_UART_Receive_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE) != HAL_OK)
-  // {
-  //    Error_Handler();
-  // }
+  __HAL_UART_ENABLE_IT(&huart2, USART_IT_RXNE);     // 开启接收中断
+  // __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
   /* USER CODE END USART2_Init 2 */
 }
 
@@ -242,15 +241,23 @@ int _write(int file, char *ptr, int len)
   return len;
 }
 
-// 每次接收到数据后回调
+// 每次接收到数据后回调(接收中断)
 // 调用栈：USARTx_IRQHandler -> HAL_UART_IRQHandler -> UART_Receive_IT -> HAL_UART_RxCpltCallback
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart == &huart2)
   {
+    Modbus_OnReceive_IT();
   }
 }
 
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+  if (huart == &huart2)
+  {
+    Modbus_OnSend_IT();
+  }
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -46,6 +46,13 @@ void Buffer_int(void)
     ust.task_main_flag = NONE_COMM_MSG; // 执行结果未定
 }
 
+void Serial_Init(void)
+{
+    Buffer_int();
+    MX_USART2_UART_Init();
+    RS485_RE_Mode();
+}
+
 // 接收数据的中断处理
 void Modbus_OnReceive_IT()
 {
@@ -161,11 +168,11 @@ void Modbus_OnSend_IT()
 }
 
 // 定时器中断中执行，串行通讯的准备工作
-uint8_t Serial_MSG(void)
+void Serial_MSG(void)
 {
     if (Device.START_UPDATE == TIRI_Update)
     {
-        return 0;
+        return;
     }
     Cancel_last_type();
     switch (ust.task_state)
@@ -215,5 +222,17 @@ uint8_t Serial_MSG(void)
     }
 }
 
-
-
+//主程序执行串行通讯结果
+void Serial_MSG_Main(void)
+{
+    switch (ust.wait_task_main)
+    {
+    case BUFF_INIT_MSG:
+        //串行通讯初始化
+        Serial_Init();
+        break;
+    default:
+        break;
+    }
+    ust.wait_task_main = NONE_COMM_MSG;
+}

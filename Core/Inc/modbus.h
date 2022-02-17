@@ -68,12 +68,14 @@ extern struct_modbus Recv_MB; // 接收缓冲区
 extern struct_modbus Send_MB; // 发送缓冲区
 
 void Buffer_int(void);              // 初始化收发缓冲区、串口任务结构体
+void Serial_Init(void);
 
 // 对应了KEIL程序中，USART2_IRQHandler中的收发两种情况
 void Modbus_OnReceive_IT(void);     // Modbus，串口中断接收到数据时调用
 void Modbus_OnSend_IT(void);        // Modbus，串口中断发送数据时调用
 
-uint8_t Serial_MSG(void);
+void Serial_MSG(void);
+void Serial_MSG_Main(void);
 
 // private
 uint16_t CRC16(const uint8_t *pbuf, int len);

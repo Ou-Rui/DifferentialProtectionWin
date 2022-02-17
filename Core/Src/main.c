@@ -28,6 +28,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "typedef.h"
+#include "modbus.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -96,9 +97,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim3);
-  // 该函数检查USART是否正忙，如果不忙则配置参数、使能中断等操作
-  HAL_UART_Receive_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE);
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -113,6 +112,10 @@ int main(void)
     // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
     // printf("hello\n");
     // HAL_UART_Transmit(&huart1, (uint8_t *)data, 15, 0xffff);
+    if(ust.wait_task_main!=NONE_COMM_MSG)
+		{
+			Serial_MSG_Main();
+		}
   }
   /* USER CODE END 3 */
 }

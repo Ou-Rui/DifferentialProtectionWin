@@ -21,7 +21,7 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "modbus.h"
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim3;
@@ -62,7 +62,7 @@ void MX_TIM3_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM3_Init 2 */
-
+  HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END TIM3_Init 2 */
 }
 
@@ -115,7 +115,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
       timer3_cnt = 0;
     }
-    
+    Serial_MSG();
   }
 }
 /* USER CODE END 1 */
