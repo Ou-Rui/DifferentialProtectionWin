@@ -42,7 +42,8 @@ Core/Src/can.c \
 Core/Src/spi.c \
 Core/Src/usart.c \
 Core/Src/rs485.c \
-Core/Src/modbus.c \
+Core/Src/modbus_main.c \
+Core/Src/modbus_function.c \
 Core/Src/stm32f1xx_it.c \
 Core/Src/stm32f1xx_hal_msp.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c \

@@ -23,6 +23,10 @@
 
 #### 疑问
 - `Judge_Comm_Work1()`中，为什么`Device.BaudRate == 0`属于正常情况
+
+#### 2022/02/17
+- 拆分了modbus_main.c + modbus_function.c
+
 #### 2022/02/16
 - 增加了sys.h，用于位操作
 - `Serial_MSG`初步移植完成
