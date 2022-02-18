@@ -16,14 +16,13 @@ void Buffer_int(void)
     {
         Recv_MB.buffer[i] = 0; // 缓冲区清零
     }
-    Recv_MB.frame = 0;     // 帧长
-    Recv_MB.start_adr = 0; // 起始寄存器地址
-    Recv_MB.data_num = 0;  // 寄存器数量
-    Recv_MB.count = 0;     // 通讯计数器
-    Recv_MB.flag = 0;      // 通讯标志
-                           //  在TIRIdef.h中定义的ADD_MATCH为0
-    Send_MB.add = 0;       // 地址
-    Send_MB.typecode = 0;  // 类型码
+    Recv_MB.frame = 0;        // 帧长
+    Recv_MB.start_adr = 0;    // 起始寄存器地址
+    Recv_MB.data_num = 0;     // 寄存器数量
+    Recv_MB.count = 0;        // 通讯计数器
+    Recv_MB.flag = ADD_MATCH; // 通讯标志, 初始应为地址匹配
+    Send_MB.add = 0;          // 地址
+    Send_MB.typecode = 0;     // 类型码
     for (i = 0; i < h_MAX_BUG_LEN; i++)
     {
         Send_MB.buffer[i] = 0; //缓冲区清零
@@ -56,17 +55,16 @@ void Serial_Init(void)
 // 接收数据的中断处理
 void Modbus_OnReceive_IT()
 {
-    uint8_t tmp_Recv;
-    HAL_UART_Receive(&huart2, &tmp_Recv, 1, 1000); // 读取接收到的数据，每次读1Byte
-    if (Device.START_UPDATE == TIRI_Update)        // 意义不明
+    uint8_t tmp_Recv = usart2_rx_buffer[0];
+    if (Device.START_UPDATE == TIRI_Update) // 意义不明
     {
     }
     else
     {
         switch (Recv_MB.flag)
         {
-        case ADD_MATCH: // 0，匹配地址
-            if (Device.Add_Comm == tmp_Recv)
+        case ADD_MATCH:                      // 0，匹配地址
+            if (Device.Add_Comm == tmp_Recv) // 与Device地址匹配
             {
                 ust.task_state = RCV_PRO_MSG; // 设置串口状态：通讯接收消息中
                 ust.over_count = 0;           // 超时计数器
@@ -97,7 +95,7 @@ void Modbus_OnReceive_IT()
             if ((Recv_MB.typecode == MOD_WRITE_PARA) && (Recv_MB.count == 5)) // 判断帧长为什么不放在typecode里？
             {
                 // Recv_MB.frame+=((uint8_t)(Recv_MB.buffer[3]>>1)-2);
-                //  Recv_MB.frame = if_frame_right1(Recv_MB.buffer[4]);
+                // Recv_MB.frame = if_frame_right1(Recv_MB.buffer[4]);
                 Recv_MB.frame = Recv_MB.buffer[4] + 5; // ？？？替换了if_frame_right1()
                 // data中的存首地址和长度？根据长度决定帧长？
             }
@@ -107,6 +105,7 @@ void Modbus_OnReceive_IT()
             }
 
             // 如果帧长度为0，则此时接收的数据是校验码
+            // >= 帧长+2 说明数据和校验位都接收完了
             if (Recv_MB.count >= Recv_MB.frame + 2)
             {
                 ust.task_state = RCV_DATA_MSG; // 串口任务状态：接收结束
@@ -121,6 +120,7 @@ void Modbus_OnReceive_IT()
             break;
         }
     }
+    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
 }
 
 // 发送数据的中断处理
@@ -196,7 +196,7 @@ void Serial_MSG(void)
         Recv_Data_Process();
         break;
     case RCV_OVER_MSG:
-        // 通讯接收结束消息	接收结束就设置此状态鞒绦蛑信卸辖榆码启动发送
+        // 通讯接收结束消息	接收结束就设置此状态，此时485为发送模式
         Send_Ready();
         Over_Time_Pro(OVER_TIME);
         break;

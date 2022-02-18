@@ -25,6 +25,8 @@
 #### 疑问
 - `Judge_Comm_Work1()`中，为什么`Device.BaudRate == 0`属于正常情况
 
+#### 2022/02/18
+- 连续接收单字节完成
 #### 2022/02/17
 - 拆分了modbus_main.c + modbus_function.c
 - timer3实现了10ms中断

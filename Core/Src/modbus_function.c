@@ -75,7 +75,7 @@ uint16_t CRC16(const uint8_t *pbuf, int len)
     return (crc_low + (crc_high << 8));
 }
 
-// 输入类型码，返回一帧的帧长
+// 输入类型码，返回一帧的帧长(数据区长度，不包括：地址、类型码、校验码)
 // 如果功能码未知，则返回0xFF，如果是需要进一步判断寄存器的，那么返回0xEEEE
 uint8_t getFrame(uint8_t type)
 {
@@ -88,20 +88,20 @@ uint8_t getFrame(uint8_t type)
         //		case	MOD_READ_0_1:
         //读离散量
     case MOD_WRITE_S_WINDING:
-        //写单个线圈
+        // 写单个线圈
     case MOD_READ_PARA:
-        //读保持寄存器
+        // 读保持寄存器
         return 0x04;
-        //数据区长度为4，连校验码长度共6个
+        // 数据区长度为4，连校验码长度共6个
         break;
     // case	MOD_WRITE_S_WINDING:
-    //		//写保持寄存器
+    //		// 写保持寄存器
     //		return	0xEEEE;
     //		break;
-    case MOD_WRITE_PARA: //写保持寄存器
-        return 0x07;     //单个数据，数据区长度为38，连校验码长度共40个(2字节起始寄存器地址，2字节寄存器数量，一字节写入数据的总字节数)
+    case MOD_WRITE_PARA: // 写保持寄存器
+        return 0x07;     // 单个数据，数据区长度为38，连校验码长度共40个(2字节起始寄存器地址，2字节寄存器数量，1字节写入数据的总字节数)
         break;
-    default: //未知功能码
+    default: // 未知功能码
         return 0xFF;
         break;
     }
@@ -142,7 +142,7 @@ uint8_t Judge_Comm_Work1(void)
         return 0;
     }
     // 控制脚如果处于发送状态，属于错误
-    if ((PAin(1)) == 1)
+    if ((PAin(RS485_RE_Pin)) == 1)
     {
         return 1;
     }
@@ -154,7 +154,7 @@ void Over_Time_Pro(uint8_t volatile Ot_cnt)
 {
     if ((++ust.over_count) >= Ot_cnt)
     {
-        Receive_Wrong_Pro();
+        // Receive_Wrong_Pro();
         ust.over_count = 0;
     }
 }

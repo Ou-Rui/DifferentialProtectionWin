@@ -33,9 +33,9 @@
 
 usart_task ust;
 
-uint8_t usart2RxBuffer[USART2_RX_BUFFER_SIZE];
-volatile uint8_t rx2Len = 0;     //接收帧数据的长度
-volatile uint8_t rx2EndFlag = 0; //帧数据接收完成标�?
+uint8_t usart2_rx_buffer[USART2_RX_BUFFER_SIZE];
+volatile uint8_t rx2Len = 0;     // 接收帧数据的长度.
+volatile uint8_t rx2EndFlag = 0; // 帧数据接收完成标志位.
 
 /* USER CODE END 0 */
 
@@ -95,7 +95,9 @@ void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-  __HAL_UART_ENABLE_IT(&huart2, USART_IT_RXNE);     // 开启接收中断
+  HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+  // // 开启接收中断
+  // __HAL_UART_ENABLE_IT(&huart2, USART_IT_RXNE);
   // __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
   /* USER CODE END USART2_Init 2 */
 }
@@ -229,7 +231,7 @@ GETCHAR_PROTOTYPE
   HAL_UART_Receive(&huart2, (uint8_t *)&ch, 1, 0XFFFF);
   return ch;
 }
-// vscode中好像一定要有这个，Keil中不用
+// vscode中好像一定要有这个，Keil中不用.
 int _write(int file, char *ptr, int len)
 {
   int DataIdx;
@@ -257,6 +259,23 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
   {
     Modbus_OnSend_IT();
   }
+}
+
+/**
+ * @brief  UART error callback.
+ * @param  huart UART handle.
+ * @retval None
+ */
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+  /* Prevent unused argument(s) compilation warning */
+  if (huart->ErrorCode & HAL_UART_ERROR_ORE)
+  {
+    __HAL_UART_CLEAR_OREFLAG(huart);
+  }
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_UART_ErrorCallback can be implemented in the user file.
+   */
 }
 /* USER CODE END 1 */
 

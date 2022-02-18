@@ -18,10 +18,10 @@ extern "C" {
 
 
 /* USER CODE BEGIN Prototypes */
-void RS485_Init();
-void RS485_RE_Mode();
-void RS485_DE_Mode();
-void RS485_onReceive();
+void RS485_Init(void);
+void RS485_RE_Mode(void);
+void RS485_DE_Mode(void);
+// void RS485_onReceive(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
