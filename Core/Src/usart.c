@@ -1,21 +1,21 @@
 /**
- ******************************************************************************
- * @file    usart.c
- * @brief   This file provides code for the configuration
- *          of the USART instances.
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    usart.c
+  * @brief   This file provides code for the configuration
+  *          of the USART instances.
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
@@ -68,6 +68,7 @@ void MX_USART1_UART_Init(void)
   /* USER CODE BEGIN USART1_Init 2 */
   HAL_UART_Receive_IT(&huart1, (uint8_t *)usart1_rx_buffer, USART1_RX_BUFFER_SIZE);
   /* USER CODE END USART1_Init 2 */
+
 }
 /* USART2 init function */
 
@@ -95,21 +96,22 @@ void MX_USART2_UART_Init(void)
   }
   /* USER CODE BEGIN USART2_Init 2 */
   HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
-  // // 开启接收中断
+  // // �?启接收中�?
   // __HAL_UART_ENABLE_IT(&huart2, USART_IT_RXNE);
   // __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
   /* USER CODE END USART2_Init 2 */
+
 }
 
-void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
+void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if (uartHandle->Instance == USART1)
+  if(uartHandle->Instance==USART1)
   {
-    /* USER CODE BEGIN USART1_MspInit 0 */
+  /* USER CODE BEGIN USART1_MspInit 0 */
 
-    /* USER CODE END USART1_MspInit 0 */
+  /* USER CODE END USART1_MspInit 0 */
     /* USART1 clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
 
@@ -131,15 +133,15 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
     /* USART1 interrupt Init */
     HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(USART1_IRQn);
-    /* USER CODE BEGIN USART1_MspInit 1 */
+  /* USER CODE BEGIN USART1_MspInit 1 */
 
-    /* USER CODE END USART1_MspInit 1 */
+  /* USER CODE END USART1_MspInit 1 */
   }
-  else if (uartHandle->Instance == USART2)
+  else if(uartHandle->Instance==USART2)
   {
-    /* USER CODE BEGIN USART2_MspInit 0 */
+  /* USER CODE BEGIN USART2_MspInit 0 */
 
-    /* USER CODE END USART2_MspInit 0 */
+  /* USER CODE END USART2_MspInit 0 */
     /* USART2 clock enable */
     __HAL_RCC_USART2_CLK_ENABLE();
 
@@ -161,20 +163,20 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
     /* USART2 interrupt Init */
     HAL_NVIC_SetPriority(USART2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(USART2_IRQn);
-    /* USER CODE BEGIN USART2_MspInit 1 */
+  /* USER CODE BEGIN USART2_MspInit 1 */
 
-    /* USER CODE END USART2_MspInit 1 */
+  /* USER CODE END USART2_MspInit 1 */
   }
 }
 
-void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
+void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 {
 
-  if (uartHandle->Instance == USART1)
+  if(uartHandle->Instance==USART1)
   {
-    /* USER CODE BEGIN USART1_MspDeInit 0 */
+  /* USER CODE BEGIN USART1_MspDeInit 0 */
 
-    /* USER CODE END USART1_MspDeInit 0 */
+  /* USER CODE END USART1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART1_CLK_DISABLE();
 
@@ -182,19 +184,19 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
     PA9     ------> USART1_TX
     PA10     ------> USART1_RX
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9 | GPIO_PIN_10);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_9|GPIO_PIN_10);
 
     /* USART1 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART1_IRQn);
-    /* USER CODE BEGIN USART1_MspDeInit 1 */
+  /* USER CODE BEGIN USART1_MspDeInit 1 */
 
-    /* USER CODE END USART1_MspDeInit 1 */
+  /* USER CODE END USART1_MspDeInit 1 */
   }
-  else if (uartHandle->Instance == USART2)
+  else if(uartHandle->Instance==USART2)
   {
-    /* USER CODE BEGIN USART2_MspDeInit 0 */
+  /* USER CODE BEGIN USART2_MspDeInit 0 */
 
-    /* USER CODE END USART2_MspDeInit 0 */
+  /* USER CODE END USART2_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART2_CLK_DISABLE();
 
@@ -202,13 +204,13 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *uartHandle)
     PA2     ------> USART2_TX
     PA3     ------> USART2_RX
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2 | GPIO_PIN_3);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3);
 
     /* USART2 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART2_IRQn);
-    /* USER CODE BEGIN USART2_MspDeInit 1 */
+  /* USER CODE BEGIN USART2_MspDeInit 1 */
 
-    /* USER CODE END USART2_MspDeInit 1 */
+  /* USER CODE END USART2_MspDeInit 1 */
   }
 }
 
@@ -230,17 +232,17 @@ GETCHAR_PROTOTYPE
   HAL_UART_Receive(&huart2, (uint8_t *)&ch, 1, 0XFFFF);
   return ch;
 }
-// vscode中好像一定要有这个，Keil中不用.
-int _write(int file, char *ptr, int len)
-{
-  int DataIdx;
+// vscode中好像一定要有这个，Keil中不�?.
+//int _write(int file, char *ptr, int len)
+//{
+//  int DataIdx;
 
-  for (DataIdx = 0; DataIdx < len; DataIdx++)
-  {
-    __io_putchar(*ptr++);
-  }
-  return len;
-}
+//  for (DataIdx = 0; DataIdx < len; DataIdx++)
+//  {
+//    __io_putchar(*ptr++);
+//  }
+//  return len;
+//}
 
 // 每次接收到数据后回调(接收中断)
 // 调用栈：USARTx_IRQHandler -> HAL_UART_IRQHandler -> UART_Receive_IT -> HAL_UART_RxCpltCallback
@@ -254,7 +256,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   else if (huart == &huart2)
   {
     uint8_t tmp_Recv = usart2_rx_buffer[0];
-    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+//    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
     // Modbus_OnReceive_IT();
   }
 }
