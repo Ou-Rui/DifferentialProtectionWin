@@ -23,9 +23,8 @@
 #define ERROR_PRO 11   // 错误
 
 // Recv_MB.typecode 类型码
-#define MOD_READ_LOOP 0x01 // 读线圈
-#define MOD_READ_0_1 0x02  // 读离散量
-//#define	MOD_READ_0_1		0x33	// 读离散量
+#define MOD_READ_LOOP 0x01       // 读线圈
+#define MOD_READ_0_1 0x02        // 读离散量
 #define MOD_READ_PARA 0x03       // 读保持寄存器（共36个字节）
 #define MOD_READ_IN 0x04         // 读输入寄存器
 #define MOD_WRITE_S_WINDING 0x05 // 写单个线圈
@@ -41,6 +40,18 @@
 #define MOD_ERROR_WRITE_PARA 0x06   // 异常码	不能写保持寄存器
 #define MOD_ERROR_WRITE_EEPROM 0x0A // 异常码	不能写EEPROM
 
+// typecode 类型码
+#define TC_READ_BIT 0x01        // 读线圈寄存器
+#define TC_READ_ONLY_BIT 0x02   // 读离散输入寄存器
+#define TC_READ_2BYTE 0x03      // 读保持寄存器
+#define TC_READ_ONLY_2BYTE 0x04 // 读输入寄存器
+#define TC_WRITE_BIT 0x05       // 写单个线圈寄存器
+#define TC_WRITE_2BYTE 0x06     // 写单个保持寄存器
+#define TC_WRITE_MUL_BIT 0x0F   // 写多个线圈寄存器
+#define TC_WRITE_MUL_2BYTE 0x10 // 写多个保持寄存器
+
+#define FRAME_PENDING 0xEE      // 帧长待定
+#define FRAME_ERROR 0xFF        // 未知类型码，帧长返回ERROR
 typedef struct
 {
     uint8_t add;                 // 地址
@@ -49,7 +60,7 @@ typedef struct
     uint8_t buffer[BUFFER_SIZE]; // 缓冲区
     // buffer[0]&buffer[1] 拼接形成寄存器起始地址
     // buffer[2]&buffer[3] 拼接形成寄存器输入数量
-    uint16_t frame;     // 帧长s
+    uint16_t frame;     // 帧长 (不计算地址、类型码、校验码)
     uint16_t start_adr; // 寄存器起始地址
     uint16_t data_num;  // 寄存器数量
     uint8_t count;      // 通讯？       ？？？
@@ -77,7 +88,7 @@ void Serial_MSG_Main(void);
 
 // private
 uint16_t CRC16(const uint8_t *pbuf, int len);
-uint8_t getFrame(uint8_t type);
+uint8_t Parse_Typecode(uint8_t typecode);
 void Cancel_last_type(void);
 uint8_t Judge_Comm_Work1(void);
 void Over_Time_Pro(uint8_t volatile Ot_cnt);

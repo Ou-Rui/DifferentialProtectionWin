@@ -75,36 +75,30 @@ uint16_t CRC16(const uint8_t *pbuf, int len)
     return (crc_low + (crc_high << 8));
 }
 
-// 输入类型码，返回一帧的帧长(数据区长度，不包括：地址、类型码、校验码)
-// 如果功能码未知，则返回0xFF，如果是需要进一步判断寄存器的，那么返回0xEEEE
-uint8_t getFrame(uint8_t type)
+// 初步解析类型码，得到初步的帧长
+uint8_t Parse_Typecode(uint8_t typecode)
 {
-    switch (type)
+    uint8_t frame = 0;
+    switch (typecode)
     {
-        //	case	MOD_READ_LOOP:
-        //读线圈
-        //		case	MOD_READ_IN:
-        //读输入寄存器
-        //		case	MOD_READ_0_1:
-        //读离散量
-    case MOD_WRITE_S_WINDING:
-        // 写单个线圈
-    case MOD_READ_PARA:
-        // 读保持寄存器
-        return 0x04;
-        // 数据区长度为4，连校验码长度共6个
+    case TC_READ_BIT:           // 读寄存器，帧长固定为4 (2Byte寄存器首地址，2Byte寄存器数量)
+    case TC_READ_ONLY_BIT:
+    case TC_READ_2BYTE:
+    case TC_READ_ONLY_2BYTE:
+
+    case TC_WRITE_BIT:          // 写单个寄存器，帧长固定为4 (2Byte寄存器首地址，2Byte寄存器值)
+    case TC_WRITE_2BYTE:
+        frame = 0x04;       
         break;
-    // case	MOD_WRITE_S_WINDING:
-    //		// 写保持寄存器
-    //		return	0xEEEE;
-    //		break;
-    case MOD_WRITE_PARA: // 写保持寄存器
-        return 0x07;     // 单个数据，数据区长度为38，连校验码长度共40个(2字节起始寄存器地址，2字节寄存器数量，1字节写入数据的总字节数)
+    case TC_WRITE_MUL_BIT:      // 写多个寄存器，帧长待定
+    case TC_WRITE_MUL_2BYTE:
+        frame = FRAME_PENDING;
         break;
-    default: // 未知功能码
-        return 0xFF;
+    default:                    // 未知功能码，返回帧长错误
+        frame = FRAME_ERROR;
         break;
     }
+    return frame;
 }
 
 

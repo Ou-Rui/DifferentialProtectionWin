@@ -3,9 +3,6 @@
 
 #include "main.h"
 
-#define TCP_Update  0x1111			// 从tcp开始更新
-#define TIRI_Update  0x2222			// 从485开始更新
-
 typedef struct tagPublicPara // 设备信息
 {
     uint8_t Real_Mode;     // 显示哪个屏幕

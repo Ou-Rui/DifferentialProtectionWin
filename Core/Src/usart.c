@@ -33,9 +33,8 @@
 
 usart_task ust;
 
+uint8_t usart1_rx_buffer[USART1_RX_BUFFER_SIZE];
 uint8_t usart2_rx_buffer[USART2_RX_BUFFER_SIZE];
-volatile uint8_t rx2Len = 0;     // 接收帧数据的长度.
-volatile uint8_t rx2EndFlag = 0; // 帧数据接收完成标志位.
 
 /* USER CODE END 0 */
 
@@ -67,7 +66,7 @@ void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  HAL_UART_Receive_IT(&huart1, (uint8_t *)usart1_rx_buffer, USART1_RX_BUFFER_SIZE);
   /* USER CODE END USART1_Init 2 */
 }
 /* USART2 init function */
@@ -247,9 +246,16 @@ int _write(int file, char *ptr, int len)
 // 调用栈：USARTx_IRQHandler -> HAL_UART_IRQHandler -> UART_Receive_IT -> HAL_UART_RxCpltCallback
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  if (huart == &huart2)
+  if (huart == &huart1)
   {
-    Modbus_OnReceive_IT();
+    uint8_t tmp_Recv = usart1_rx_buffer[0];
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)usart1_rx_buffer, USART1_RX_BUFFER_SIZE);
+  }
+  else if (huart == &huart2)
+  {
+    uint8_t tmp_Recv = usart2_rx_buffer[0];
+    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+    // Modbus_OnReceive_IT();
   }
 }
 
@@ -257,7 +263,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart == &huart2)
   {
-    Modbus_OnSend_IT();
+    // Modbus_OnSend_IT();
   }
 }
 
@@ -272,6 +278,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
   if (huart->ErrorCode & HAL_UART_ERROR_ORE)
   {
     __HAL_UART_CLEAR_OREFLAG(huart);
+    // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, 1);
   }
   /* NOTE : This function should not be modified, when the callback is needed,
             the HAL_UART_ErrorCallback can be implemented in the user file.
