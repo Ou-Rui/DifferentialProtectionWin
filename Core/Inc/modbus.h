@@ -73,6 +73,11 @@ typedef struct
 
 } struct_modbus; // 发送、接收的缓冲区
 
+// #define MB_REG_OP_READ 0
+// #define MB_REG_OP_WRITE 1
+
+// #define MB_BIT_REG  0
+// #define MB_2BYTE_REG 1
 typedef struct
 {
 #define MODBUS_REG_SIZE 16
@@ -118,6 +123,8 @@ void Over_Time_Pro(void);
 //发送
 void Process_Command_and_Reply(void);
 void Reply_Read_2Byte(void);
+void Reply_Write_2Byte(void);
+
 void Init_Send_MB(void);
 void Cal_CRC_and_Send(void);
 void Load_Error(uint8_t err_code);

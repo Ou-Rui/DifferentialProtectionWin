@@ -128,8 +128,9 @@ void Process_Command_and_Reply(void)
     //     break;
     // case TC_WRITE_BIT:       // 写单个线圈寄存器
     //     break;
-    // case TC_WRITE_2BYTE:     // 写单个保持寄存器
-    //     break;
+    case TC_WRITE_2BYTE:     // 写单个保持寄存器
+        Reply_Write_2Byte();    
+        break;
     // case TC_WRITE_MUL_BIT:   // 写多个线圈寄存器
     //     break;
     // case TC_WRITE_MUL_2BYTE: // 写多个保持寄存器
@@ -165,13 +166,13 @@ void CRC_Check_On_Rcv(void)
 }
 
 // TC_READ_2BYTE 0x03，读取双字节数据
-void Reply_Read_2Byte() 
+void Reply_Read_2Byte(void) 
 {
     // 读取的寄存器首地址和个数
-    Recv_MB.start_addr = ((uint16_t)(Recv_MB.buffer[0]) << 8) + Recv_MB.buffer[1];
-    Recv_MB.data_num  = ((uint16_t)(Recv_MB.buffer[2]) << 8) + Recv_MB.buffer[3];
-    uint16_t addr = Recv_MB.start_addr;
-    uint16_t num = Recv_MB.data_num;
+    uint16_t addr = ((uint16_t)(Recv_MB.buffer[0]) << 8) + Recv_MB.buffer[1];
+    uint16_t num = ((uint16_t)(Recv_MB.buffer[2]) << 8) + Recv_MB.buffer[3];
+    Recv_MB.start_addr = addr;
+    Recv_MB.data_num  = num;
     Send_MB.typecode = Recv_MB.typecode;
 
     if (addr + num - 1 < Reg_MB.dual_byte_reg_num)
@@ -194,9 +195,31 @@ void Reply_Read_2Byte()
     Cal_CRC_and_Send();
 }
 
-void Reply_Write_2Byte() 
+// TC_WRITE_2BYTE 0x06 写入单个寄存器
+void Reply_Write_2Byte(void)
 {
+    uint16_t addr = ((uint16_t)(Recv_MB.buffer[0]) << 8) + Recv_MB.buffer[1];
+    Recv_MB.start_addr = addr;
+    Send_MB.typecode = Recv_MB.typecode;
 
+    if (addr < Reg_MB.dual_byte_reg_num)
+    {
+        Send_MB.length = 2;                     // 数据长度(Byte)：单个寄存器
+        Send_MB.frame = Send_MB.length + 1;     // 帧长：1Byte的数据长度 + 数据本身
+        Send_MB.buffer[0] = Send_MB.length;
+        Send_MB.count = 1;
+
+        uint16_t val = ((uint16_t)(Recv_MB.buffer[2]) << 8) + Recv_MB.buffer[3];
+        *Reg_MB.dual_byte_reg[addr] = val;
+
+        Send_MB.buffer[Send_MB.count++] = val >> 8;    
+        Send_MB.buffer[Send_MB.count++] = (uint8_t)val;
+    }
+    else
+    {
+        Load_Error(MOD_ERROR_WRONG_ADDR);
+    }
+    Cal_CRC_and_Send();
 }
 
 void Init_Send_MB(void) 
