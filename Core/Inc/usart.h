@@ -1,28 +1,27 @@
 /**
- ******************************************************************************
- * @file    usart.h
- * @brief   This file contains all the function prototypes for
- *          the usart.c file
- ******************************************************************************
- * @attention
- *
- * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
- * All rights reserved.</center></h2>
- *
- * This software component is licensed by ST under BSD 3-Clause license,
- * the "License"; You may not use this file except in compliance with the
- * License. You may obtain a copy of the License at:
- *                        opensource.org/licenses/BSD-3-Clause
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    usart.h
+  * @brief   This file contains all the function prototypes for
+  *          the usart.c file
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.</center></h2>
+  *
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
+  *
+  ******************************************************************************
+  */
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USART_H__
 #define __USART_H__
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -30,10 +29,10 @@ extern "C"
 
 /* USER CODE BEGIN Includes */
 #include "rs485.h"
-  /* USER CODE END Includes */
+/* USER CODE END Includes */
 
-  extern UART_HandleTypeDef huart1;
-  extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN Private defines */
 #define USART1_RX_BUFFER_SIZE 1
@@ -84,16 +83,16 @@ extern "C"
     uint8_t task_main_flag; // 主程序任务执行标志，存储数据等.
 
   } usart_task; // 串口通讯任务.
-  /* USER CODE END Private defines */
+/* USER CODE END Private defines */
 
-  void MX_USART1_UART_Init(void);
-  void MX_USART2_UART_Init(void);
+void MX_USART1_UART_Init(void);
+void MX_USART2_UART_Init(void);
 
-  /* USER CODE BEGIN Prototypes */
+/* USER CODE BEGIN Prototypes */
   extern uint8_t usart1_rx_buffer[USART2_RX_BUFFER_SIZE];
   extern uint8_t usart2_rx_buffer[USART2_RX_BUFFER_SIZE];
   extern usart_task ust;
-  /* USER CODE END Prototypes */
+/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }

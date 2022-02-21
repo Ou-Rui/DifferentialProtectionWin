@@ -34,13 +34,17 @@ extern "C" {
 extern CAN_HandleTypeDef hcan;
 
 /* USER CODE BEGIN Private defines */
+#define CAN_ID    0x66      // CAN标准ID
+#define CAN_BUFFER_SIZE   64
 
+extern uint8_t can_rx_buffer[CAN_BUFFER_SIZE];
 /* USER CODE END Private defines */
 
 void MX_CAN_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+uint8_t CAN1_Send_Msg(uint8_t *msg, uint8_t len);
+uint8_t CAN1_Receive_Msg(uint8_t *buf);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

@@ -96,9 +96,6 @@ void MX_USART2_UART_Init(void)
   }
   /* USER CODE BEGIN USART2_Init 2 */
   HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
-  // // �?启接收中�?
-  // __HAL_UART_ENABLE_IT(&huart2, USART_IT_RXNE);
-  // __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
   /* USER CODE END USART2_Init 2 */
 
 }
