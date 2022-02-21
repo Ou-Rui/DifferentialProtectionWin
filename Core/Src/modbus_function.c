@@ -81,20 +81,20 @@ uint8_t Parse_Typecode(uint8_t typecode)
     uint8_t frame = 0;
     switch (typecode)
     {
-    case TC_READ_BIT:           // 读寄存器，帧长固定为4 (2Byte寄存器首地址，2Byte寄存器数量)
+    case TC_READ_BIT: // 读寄存器，帧长固定为4 (2Byte寄存器首地址，2Byte寄存器数量)
     case TC_READ_ONLY_BIT:
     case TC_READ_2BYTE:
     case TC_READ_ONLY_2BYTE:
 
-    case TC_WRITE_BIT:          // 写单个寄存器，帧长固定为4 (2Byte寄存器首地址，2Byte寄存器值)
+    case TC_WRITE_BIT: // 写单个寄存器，帧长固定为4 (2Byte寄存器首地址，2Byte寄存器值)
     case TC_WRITE_2BYTE:
-        frame = 0x04;       
+        frame = 0x04;
         break;
-    case TC_WRITE_MUL_BIT:      // 写多个寄存器，帧长待定
+    case TC_WRITE_MUL_BIT: // 写多个寄存器，帧长待定
     case TC_WRITE_MUL_2BYTE:
         frame = FRAME_PENDING;
         break;
-    default:                    // 未知功能码，返回帧长错误
+    default: // 未知功能码，返回帧长错误
         frame = FRAME_ERROR;
         break;
     }
@@ -111,78 +111,35 @@ void Over_Time_Pro(void)
     }
 }
 
-
-// 接收数据的处理
-void Send_Ready(void)
+// 执行接收到的指令，并回复
+void Process_Command_and_Reply(void)
 {
     switch (Recv_MB.typecode)
     {
-    case MOD_READ_PARA:
-        // 读保持寄存器
-        // MOD_READ_PARA_Pro();
+    // case TC_READ_BIT:
+    //     break;
+    // case TC_READ_ONLY_BIT:
+    //     break;
+    case TC_READ_2BYTE:
+        Reply_Read_2Byte();
         break;
-    case MOD_WRITE_PARA:
-        // 写保持寄存器
-        // if ((WM.pro.item.ContChk == OPEN) || (WM.pro.item.ContChk == CLOSE)) //近控能否设置参数？
-        // {
-        //     MOD_WRITE_PARA_Pro();
-        // }
-        // else
-        // {
-        //     return_WRONG(MOD_WRITE_PARA, MOD_ERROR_WRITE_PARA);
-        //     Cal_Checkout_and_Send();
-        // }
-        break;
-    case MOD_WRITE_S_WINDING:
-        // 写单个线圈
-        // MOD_WRITE_S_WINDING_Pro();
-        break;
+    // case TC_READ_ONLY_2BYTE:
+    //     break;
+    // case TC_WRITE_BIT:       // 写单个线圈寄存器
+    //     break;
+    // case TC_WRITE_2BYTE:     // 写单个保持寄存器
+    //     break;
+    // case TC_WRITE_MUL_BIT:   // 写多个线圈寄存器
+    //     break;
+    // case TC_WRITE_MUL_2BYTE: // 写多个保持寄存器
+    //     break;
     default:
         // 未知功能码
-        return_WRONG(MOD_READ_IN, MOD_ERROR_NOCOMMAND); //对于不认识的功能码暂不处理，暂用04错误代替
-        Cal_Checkout_and_Send();
+        Load_Error(MOD_ERROR_NOCOMMAND); //对于不认识的功能码暂不处理，暂用04错误代替
+        Cal_CRC_and_Send();
         break;
     }
 }
-
-void Cal_Checkout_and_Send(void)
-{
-    uint8_t volatile i;
-    uint16_t crc;
-    Send_MB.add = Device.Add_Comm; // 此AVR的地址
-    i = Send_MB.frame;             // 取得帧长
-    crc = CRC16(&Send_MB.add, i + 2);
-
-    Send_MB.buffer[i] = crc & 0x00FF; // 先传低位
-    Send_MB.buffer[i + 1] = crc >> 8; // 再传高位
-
-    RS485_DE_Mode();
-    // enable_DE();
-    Send_MB.flag = TYPE_MATCH;     // 直接进入类型匹配模式，跳过地址模式
-    ust.task_state = SEND_PRO_MSG; // 进入发送模式
-    ust.over_count = 0;            // 超时计数器
-
-    // 直接发送地址，因为不发送无法进入发送中断
-    __HAL_UART_CLEAR_FLAG(&huart2, USART_FLAG_TC);
-    HAL_UART_Transmit(&huart2, &Device.Add_Comm, 1, 1000);
-    __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
-
-    // USART_ClearFlag(USART2, USART_FLAG_TC);
-    // USART_SendData(USART2, Device.Add_Comm);
-    // USART_ITConfig(USART2, USART_IT_TXE, ENABLE); // 开启串口发送中断
-}
-
-void return_WRONG(uint8_t err, uint8_t err_num)
-{
-    // 返回	差错码
-    Send_MB.typecode |= 0x80;
-    // 返回	异常码
-    Send_MB.buffer[0] = err_num;
-    Send_MB.frame = 1;
-    // 返回错误时数据区只有一个字节，即为错误err_num
-}
-
-
 
 // 接收到数据的处理，包含CRC校验
 void CRC_Check_On_Rcv(void)
@@ -206,8 +163,84 @@ void CRC_Check_On_Rcv(void)
     ust.over_count = 0; // 超时计数器清零
 }
 
+// TC_READ_2BYTE 0x03，读取双字节数据
+void Reply_Read_2Byte() 
+{
+    Init_Send_MB();
+    // 读取的寄存器首地址和个数
+    Recv_MB.start_addr = ((uint16_t)(Recv_MB.buffer[0]) << 8) + Recv_MB.buffer[1];
+    Recv_MB.data_num  = ((uint16_t)(Recv_MB.buffer[2]) << 8) + Recv_MB.buffer[3];
+    uint16_t addr = Recv_MB.start_addr;
+    uint16_t num = Recv_MB.data_num;
+    Send_MB.typecode = Recv_MB.typecode;
 
+    if (addr + num - 1 < Reg_MB.dual_byte_reg_num)
+    {
+        Send_MB.length = num << 1;     // 数据长度(Byte)：读取数量 = data_num，每个2Byte
+        Send_MB.frame = Send_MB.length + 1;         // 帧长：1Byte的数据长度 + 数据本身
+        Send_MB.buffer[0] = Send_MB.length;
+        Send_MB.count = 1;
+        for (uint8_t i = addr; i < addr + num; i++)
+        {
+            uint16_t data = *Reg_MB.dual_byte_reg[i];
+            Send_MB.buffer[Send_MB.count++] = data >> 8;    
+            Send_MB.buffer[Send_MB.count++] = (uint8_t)data;
+        }
+    }
+    else
+    {
+        Load_Error(MOD_ERROR_WRONG_ADDR);
+    }
+    Cal_CRC_and_Send();
+}
 
+void Init_Send_MB(void) 
+{
+    Send_MB.add = Device.addr_rs485;
+    for (uint8_t i = 0; i < MB_BUFFER_SIZE; i++)
+        Send_MB.buffer[i] = 0;
+    Send_MB.length = 0;
+    Send_MB.frame = 0;     
+    Send_MB.start_addr = 0; 
+    Send_MB.data_num = 0;  
+    Send_MB.count = 0;
+    Send_MB.flag = ADD_MATCH;
+}
+
+void Cal_CRC_and_Send(void)
+{
+    uint8_t volatile i;
+    uint16_t crc;
+    i = Send_MB.frame;             // 取得帧长
+    crc = CRC16(&Send_MB.add, i + 2);
+
+    Send_MB.buffer[i] = (uint8_t)crc; // 先传低位
+    Send_MB.buffer[i + 1] = crc >> 8; // 再传高位
+
+    RS485_DE_Mode();
+    Send_MB.flag = TYPE_MATCH;     // 直接进入类型匹配模式，跳过地址模式
+    ust.task_state = SEND_PRO_MSG; // 进入发送模式
+    ust.over_count = 0;            // 超时计数器
+
+    // 直接发送地址，因为不发送无法进入发送中断
+    __HAL_UART_CLEAR_FLAG(&huart2, USART_FLAG_TC);
+    HAL_UART_Transmit_IT(&huart2, &Send_MB.add, 1);
+    __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
+
+    // USART_ClearFlag(USART2, USART_FLAG_TC);
+    // USART_SendData(USART2, Device.Add_Comm);
+    // USART_ITConfig(USART2, USART_IT_TXE, ENABLE); // 开启串口发送中断
+}
+
+void Load_Error(uint8_t err_code)
+{
+    // 返回	差错码
+    Send_MB.typecode |= 0x80;
+    // 返回	异常码
+    Send_MB.frame = 1;
+    Send_MB.buffer[0] = err_code;
+    // 返回错误时数据区只有一个字节，即为错误err_num
+}
 
 //接收到错误数据，返回NO_MSG状态
 void Recv_Wrong_data_Process(void)

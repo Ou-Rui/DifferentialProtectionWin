@@ -8,7 +8,7 @@ typedef struct tagPublicPara // 设备信息
     uint8_t Real_Mode;     // 显示哪个屏幕
     uint8_t SetShowTime;   // 切换时间
     uint16_t Comm_Mode;    // 通讯方式
-    uint8_t Add_Comm;      // 485通讯地址
+    uint8_t addr_rs485;      // 485通讯地址
     uint8_t BaudRate;      // 485通讯波特率
     uint8_t Add_TCP;       // 以太网通讯地址
     uint8_t BaudRate_TCP;  // 以太网通讯波特率

@@ -19,7 +19,7 @@ void Buffer_int(void)
         Recv_MB.buffer[i] = 0; // 缓冲区清零
     }
     Recv_MB.frame = 0;        // 帧长
-    Recv_MB.start_adr = 0;    // 起始寄存器地址
+    Recv_MB.start_addr = 0;    // 起始寄存器地址
     Recv_MB.data_num = 0;     // 寄存器数量
     Recv_MB.count = 0;        // 通讯计数器
     Recv_MB.flag = ADD_MATCH; // 通讯标志, 初始应为地址匹配
@@ -30,7 +30,7 @@ void Buffer_int(void)
         Send_MB.buffer[i] = 0; //缓冲区清零
     }
     Send_MB.frame = 0;        // 帧长
-    Send_MB.start_adr = 0;    // 起始寄存器地址
+    Send_MB.start_addr = 0;    // 起始寄存器地址
     Send_MB.data_num = 0;     // 寄存器数量
     Send_MB.count = 0;        // 通讯计数器
     Send_MB.flag = ADD_MATCH; // 通讯标志
@@ -60,6 +60,9 @@ uint16_t ic = 3;
 
 void Modbus_Init_Reg(void) 
 {
+    Reg_MB.bit_reg_num = 0;
+
+    Reg_MB.dual_byte_reg_num = 3;
     Reg_MB.dual_byte_reg[0] = &ia;
     Reg_MB.dual_byte_reg[1] = &ib;
     Reg_MB.dual_byte_reg[2] = &ic;
@@ -73,7 +76,7 @@ void Modbus_OnReceive_IT()
     switch (Recv_MB.flag)
     {
     case ADD_MATCH:                      // 0，匹配地址
-        if (Device.Add_Comm == tmp_Recv) // 与Device地址匹配
+        if (Device.addr_rs485 == tmp_Recv) // 与Device地址匹配
         {
             ust.task_state = ON_RCV_MSG; // 设置串口状态：接收消息中
             ust.over_count = 0;           // 超时计数器
@@ -139,13 +142,13 @@ void Modbus_OnSend_IT()
 {
     switch (Send_MB.flag)
     {
-    case ADD_MATCH:
+    case ADD_MATCH:     // 地址已经发送过
         // 地址
         break;
     case TYPE_MATCH:
         // 类型码
         // USART_SendData(USART2, Send_MB.typecode);
-        HAL_UART_Transmit(&huart2, &Send_MB.typecode, 1, 0xffff);
+        HAL_UART_Transmit_IT(&huart2, &Send_MB.typecode, 1);
         ust.resend_type = Send_MB.typecode; //重发的类型码
         Send_MB.count = 0;
         Send_MB.flag = DATA_BUFFER;
@@ -154,7 +157,7 @@ void Modbus_OnSend_IT()
     case DATA_BUFFER:
         // 数据区
         // USART_SendData(USART2, Send_MB.buffer[Send_MB.count]);                   // 发送数据
-        HAL_UART_Transmit(&huart2, &Send_MB.buffer[Send_MB.count], 1, 0xffff); // 发送数据
+        HAL_UART_Transmit_IT(&huart2, &Send_MB.buffer[Send_MB.count], 1); // 发送数据
         Send_MB.count++;
         if (Send_MB.count >= Send_MB.frame + 2)
         {
@@ -197,7 +200,7 @@ void Modbus_Timer_Process(void)
         break;
     case RCV_MSG_DONE:  // CRC校验通过
         // 通讯接收结束消息	接收结束就设置此状态，此时485为发送模式
-        Send_Ready();
+        Process_Command_and_Reply();
         Over_Time_Pro();
         break;
     case CRC_ERR:
