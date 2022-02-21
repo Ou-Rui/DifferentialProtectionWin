@@ -252,11 +252,11 @@ void SPI1_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
+
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
-  uint8_t tmp_Recv = usart1_rx_buffer[0];
-  // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+
   /* USER CODE END USART1_IRQn 1 */
 }
 
@@ -266,31 +266,10 @@ void USART1_IRQHandler(void)
 void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
-  // if((__HAL_UART_GET_FLAG(&huart2,UART_FLAG_RXNE)!=RESET)) {
-  //   Modbus_OnReceive_IT();
-  // }
-  // uint8_t tmp_Recv = usart2_rx_buffer[0];
-  // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
-  // uint32_t timeout = 0;
-  // timeout = 0;
-  // while (HAL_UART_GetState(&huart2) != HAL_UART_STATE_READY) //等待就绪
-  // {
-  //   timeout++; ////超时处理
-  //   if (timeout > HAL_MAX_DELAY)
-  //     break;
-  // }
 
-  // timeout = 0;
-  // while (HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, 1) != HAL_OK) //�?次处理完成之后，重新�?启中断并设置RxXferCount�?1
-  // {
-  //   timeout++; //超时处理
-  //   if (timeout > HAL_MAX_DELAY)
-  //     break;
-  // }
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
-  // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
 
   /* USER CODE END USART2_IRQn 1 */
 }

@@ -255,9 +255,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   }
   else if (huart == &huart2)
   {
-    // uint8_t tmp_Recv = usart2_rx_buffer[0];
-    // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
     Modbus_OnReceive_IT();
+    // 重新注册中断接收
+    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
   }
 }
 

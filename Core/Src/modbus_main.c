@@ -118,9 +118,7 @@ void Modbus_OnReceive_IT()
         Receive_Wrong_Pro();
         break;
     }
-    // 重新注册中断接收
-    // __HAL_UART_CLEAR_OREFLAG(&huart2);
-    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+
 }
 
 // 发送数据的中断处理
