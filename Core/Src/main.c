@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "typedef.h"
+#include "sys.h"
 #include "modbus.h"
 /* USER CODE END Includes */
 
@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-PublicPara Device;
+
 
 /* USER CODE END PV */
 
@@ -97,12 +97,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  Modbus_Init_Reg();
-  __HAL_UART_ENABLE(&huart2);
-	__HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
-  __HAL_UART_ENABLE(&huart1);
-	__HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);
-  // HAL_UART_Receive_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE);
+  System_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */

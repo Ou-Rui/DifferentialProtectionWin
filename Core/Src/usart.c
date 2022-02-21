@@ -250,7 +250,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
   if (huart == &huart1)
   {
-    uint8_t tmp_Recv = usart1_rx_buffer[0];
+    // uint8_t tmp_Recv = usart1_rx_buffer[0];
     HAL_UART_Receive_IT(&huart1, (uint8_t *)usart1_rx_buffer, USART1_RX_BUFFER_SIZE);
   }
   else if (huart == &huart2)

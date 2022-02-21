@@ -147,30 +147,24 @@ void Modbus_OnSend_IT()
         break;
     case TYPE_MATCH:
         // 类型码
-        // USART_SendData(USART2, Send_MB.typecode);
         HAL_UART_Transmit_IT(&huart2, &Send_MB.typecode, 1);
-        ust.resend_type = Send_MB.typecode; //重发的类型码
+        ust.resend_type = Send_MB.typecode; // 重发的类型码
         Send_MB.count = 0;
         Send_MB.flag = DATA_BUFFER;
-        // while((UCSR1A&0x40)==0); //等待发送结束
         break;
     case DATA_BUFFER:
         // 数据区
-        // USART_SendData(USART2, Send_MB.buffer[Send_MB.count]);                   // 发送数据
         HAL_UART_Transmit_IT(&huart2, &Send_MB.buffer[Send_MB.count], 1); // 发送数据
         Send_MB.count++;
         if (Send_MB.count >= Send_MB.frame + 2)
         {
             Send_MB.flag = PROCESS_OVER;
         }
-        // while((UCSR1A&0x40)==0); //等待发送结束
         break;
-    case PROCESS_OVER: //处理结束
+    case PROCESS_OVER: // 处理结束
         Send_MB.flag = ADD_MATCH;
         Recv_MB.flag = ADD_MATCH;
-        // while (USART_GetFlagStatus(USART2, USART_FLAG_TC) != SET); //等待发送结束
         RS485_RE_Mode();
-        // USART_ITConfig(USART2, USART_IT_TXE, DISABLE); //禁止串口发送中断
         __HAL_UART_DISABLE_IT(&huart2, UART_IT_TXE); //禁止串口发送中断
         ust.task_state = NO_MSG;              // 串口任务：回到等待状态
         ust.over_count = 0;                          // 超时计数器清零

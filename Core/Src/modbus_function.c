@@ -114,6 +114,7 @@ void Over_Time_Pro(void)
 // 执行接收到的指令，并回复
 void Process_Command_and_Reply(void)
 {
+    Init_Send_MB();
     switch (Recv_MB.typecode)
     {
     // case TC_READ_BIT:
@@ -166,7 +167,6 @@ void CRC_Check_On_Rcv(void)
 // TC_READ_2BYTE 0x03，读取双字节数据
 void Reply_Read_2Byte() 
 {
-    Init_Send_MB();
     // 读取的寄存器首地址和个数
     Recv_MB.start_addr = ((uint16_t)(Recv_MB.buffer[0]) << 8) + Recv_MB.buffer[1];
     Recv_MB.data_num  = ((uint16_t)(Recv_MB.buffer[2]) << 8) + Recv_MB.buffer[3];
@@ -192,6 +192,11 @@ void Reply_Read_2Byte()
         Load_Error(MOD_ERROR_WRONG_ADDR);
     }
     Cal_CRC_and_Send();
+}
+
+void Reply_Write_2Byte() 
+{
+
 }
 
 void Init_Send_MB(void) 

@@ -6,7 +6,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "usart.h"
-#include "typedef.h"
+#include "sys.h"
 #include "rs485.h"
 /* USER CODE END Includes */
 
