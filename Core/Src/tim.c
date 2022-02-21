@@ -116,7 +116,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
       timer3_cnt = 0;
     }
-    // Serial_MSG();
+    Modbus_Timer_Process();
   }
 }
 /* USER CODE END 1 */

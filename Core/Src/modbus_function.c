@@ -143,12 +143,12 @@ uint8_t Judge_Comm_Work1(void)
     return 0;
 }
 
-// 超时处理，应该将所有的计数器等恢复初始状态
-void Over_Time_Pro(uint8_t volatile Ot_cnt)
+// 超时处理，如果超时就复位
+void Over_Time_Pro(void)
 {
-    if ((++ust.over_count) >= Ot_cnt)
+    if ((++ust.over_count) >= UART_OVER_TIME)
     {
-        // Receive_Wrong_Pro();
+        RS485_Reset();
         ust.over_count = 0;
     }
 }
@@ -227,7 +227,7 @@ void return_WRONG(uint8_t err, uint8_t err_num)
 
 
 // 接收到数据的处理，包含CRC校验
-void Recv_Data_Process(void)
+void CRC_Check_On_Rcv(void)
 {
     uint8_t volatile i;
     uint16_t crc, sum;
@@ -237,30 +237,24 @@ void Recv_Data_Process(void)
 
     if (sum == crc)
     {
-        ust.task_state = RCV_OVER_MSG; // 转为接收结束
+        ust.task_state = RCV_MSG_DONE; // 转为接收结束
         RS485_DE_Mode();
         // enable_DE();
     }
     else
     {
-        ust.task_state = RCV_WRO_MSG; // 校验失败处理
+        ust.task_state = CRC_ERR; // 校验失败处理
     }
     ust.over_count = 0; // 超时计数器清零
 }
 
-void Receive_Wrong_Pro(void)
-{
-    ust.wait_task_main = BUFF_INIT_MSG; // 串口任务主状态（主程序中使用）：串口初始化
-    // uart2_init(Device.BaudRate);
-    MX_USART2_UART_Init();
-    ust.task_state = WAI_WRO_PRO_MSG; // 串口任务状态：出错后等待串口复位
-    RS485_RE_Mode();
-}
 
-//接收到错误数据，返回NONE_COMM_MSG状态
+
+
+//接收到错误数据，返回NO_MSG状态
 void Recv_Wrong_data_Process(void)
 {
-    ust.task_state = NONE_COMM_MSG; // 回到等待
+    ust.task_state = NO_MSG; // 回到等待
     Buffer_int();
     RS485_DE_Mode();
 }

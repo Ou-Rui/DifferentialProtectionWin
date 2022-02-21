@@ -112,14 +112,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // HAL_Delay(500); // delay 500ms
-    // HAL_GPIO_TogglePin(LED0_GPIO_Port, LED0_Pin);
-    // printf("hello\n");
-    // HAL_UART_Transmit(&huart1, (uint8_t *)data, 15, 0xffff);
-    // if (ust.wait_task_main != NONE_COMM_MSG)
-    // {
-    //   Serial_MSG_Main();
-    // }
+    if (ust.wait_task_main != NO_MSG)
+    {
+      Modbus_Main_Process();
+    }
   }
   /* USER CODE END 3 */
 }

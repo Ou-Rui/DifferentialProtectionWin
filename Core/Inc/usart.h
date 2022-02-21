@@ -42,21 +42,29 @@ extern "C"
   // 串口通讯任务结构体，描述串口状态.
   typedef struct ust_comm_state
   {
+#define UART_OVER_TIME 500
     uint8_t over_count;       // 超时计数.
     uint8_t last_type;        // 上次类型.
     uint8_t last_patrol_type; // 上次巡查类型.
     uint8_t resend_type;      // 重发类型.
 
-#define NONE_COMM_MSG 0x00   // 无通讯消息, 正常时应该在此状态.
-#define RCV_PRO_MSG 0x01     // 通讯接收消息 接收开始就设置此状态，接受完毕设置为接收结束.
-#define RCV_OVER_MSG 0x02    // 通讯接收结束消息, 接收结束就设置此状态，主程序中判断接受码启动发送.
-#define RCV_DATA_MSG 0x03    // 通讯接收结束消息, 接收结束就设置此状态，主程序中判断接受码启动发送.
-#define SEND_DO_MSG 0x04     // 通讯通讯事物处理中, 处理完毕转移到 消息发送状态.
-#define RCV_WRO_MSG 0x05     // 通讯中接收数据校验出错.
+// #define NONE_COMM_MSG 0x00   // 无通讯消息, 正常时应该在此状态.
+// #define RCV_PRO_MSG 0x01     // 通讯接收消息 接收开始就设置此状态，接受完毕设置为接收结束.
+// #define RCV_OVER_MSG 0x02    // 通讯接收结束消息, 接收结束就设置此状态，主程序中判断接受码启动发送.
+// #define RCV_DATA_MSG 0x03    // 通讯接收结束消息, 接收结束就设置此状态，主程序中判断接受码启动发送.
+// #define SEND_DO_MSG 0x04     // 通讯通讯事物处理中, 处理完毕转移到 消息发送状态.
+// #define RCV_WRO_MSG 0x05     // 通讯中接收数据校验出错.
 #define SEND_PRO_MSG 0x06    // 通讯发送消息中..... 发送结束设置为下状态，开始发送则设置此码.
 #define SEND_OVER_MSG 0x07   // 通讯发送结束, 主程序返回无通讯消息.
 #define WAI_WRO_PRO_MSG 0x08 // 出错后等待串口复位.
-    uint8_t task_state;      // 任务状态	串口任务处理模块.
+
+#define NO_MSG 0x00
+#define ON_RCV_MSG 0x01
+#define ON_CRC_CHECK 0x02
+#define RCV_MSG_DONE 0x03
+#define CRC_ERR 0x04
+
+    uint8_t task_state; // 任务状态	串口任务处理模块.
 
     uint8_t close_count; // 合闸计数器.
     uint8_t cut_count;   // 分闸计数器.
@@ -64,7 +72,7 @@ extern "C"
     uint8_t wait_task;   // 等待任务		分合闸、分闸、复位、存储数据等.
 
 // 主程序中使用
-// #define NONE_COMM_MSG 0x00   // 无通讯消息, 正常时应该在此状态. 这个与上面共用
+// #define NONE_COMM_MSG 0x00   // 无通讯消息, 正常时应该在此状态. 与task_state共用
 #define Comp_Para_MSG 0x01  // 比较数据.
 #define SAVE_PARA_MSG 0x02  // 存储数据.
 #define CLEAR_FAU_MSG 0x03  // 清除故障库.

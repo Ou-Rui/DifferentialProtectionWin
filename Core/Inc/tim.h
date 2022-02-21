@@ -34,7 +34,11 @@ extern "C" {
 extern TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN Private defines */
-
+// 10ms中断
+// f = 72M / (TIMER3_PSC+1) / TIMER3_PERIOD 
+//   = 100Hz
+#define TIMER3_PSC (72-1)
+#define TIMER3_PERIOD 10000
 /* USER CODE END Private defines */
 
 void MX_TIM3_Init(void);
