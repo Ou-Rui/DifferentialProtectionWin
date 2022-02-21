@@ -99,6 +99,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   __HAL_UART_ENABLE(&huart2);
 	__HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
+  __HAL_UART_ENABLE(&huart1);
+	__HAL_UART_ENABLE_IT(&huart1,UART_IT_RXNE);
   // HAL_UART_Receive_IT(&huart2, usart2RxBuffer, USART2_RX_BUFFER_SIZE);
   /* USER CODE END 2 */
 

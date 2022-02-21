@@ -281,7 +281,7 @@ void USART2_IRQHandler(void)
   // }
 
   // timeout = 0;
-  // while (HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, 1) != HAL_OK) //�?次处理完成之后，重新�?启中断并设置RxXferCount�?1
+  // while (HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, 1) != HAL_OK) //�?次处理完成之后，重新�?启中断并设置RxXferCount�?1
   // {
   //   timeout++; //超时处理
   //   if (timeout > HAL_MAX_DELAY)
@@ -290,7 +290,7 @@ void USART2_IRQHandler(void)
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
-  HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+  // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
 
   /* USER CODE END USART2_IRQn 1 */
 }

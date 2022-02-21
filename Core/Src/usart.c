@@ -96,7 +96,7 @@ void MX_USART2_UART_Init(void)
   }
   /* USER CODE BEGIN USART2_Init 2 */
   HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
-  // // �?启接收中�?
+  // // �?启接收中�?
   // __HAL_UART_ENABLE_IT(&huart2, USART_IT_RXNE);
   // __HAL_UART_ENABLE_IT(&huart2, USART_IT_TXE);
   /* USER CODE END USART2_Init 2 */
@@ -232,7 +232,7 @@ GETCHAR_PROTOTYPE
   HAL_UART_Receive(&huart2, (uint8_t *)&ch, 1, 0XFFFF);
   return ch;
 }
-// vscode中好像一定要有这个，Keil中不�?.
+// vscode中好像一定要有这个，Keil中不�?.
 //int _write(int file, char *ptr, int len)
 //{
 //  int DataIdx;
@@ -255,9 +255,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   }
   else if (huart == &huart2)
   {
-    uint8_t tmp_Recv = usart2_rx_buffer[0];
-//    HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
-    // Modbus_OnReceive_IT();
+    // uint8_t tmp_Recv = usart2_rx_buffer[0];
+    // HAL_UART_Receive_IT(&huart2, (uint8_t *)usart2_rx_buffer, USART2_RX_BUFFER_SIZE);
+    Modbus_OnReceive_IT();
   }
 }
 
