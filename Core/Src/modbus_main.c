@@ -5,6 +5,8 @@
 struct_modbus Recv_MB; // 接收缓冲区
 struct_modbus Send_MB; // 发送缓冲区
 
+modbus_register Reg_MB;
+
 void Buffer_int(void)
 {
     uint8_t i;
@@ -50,6 +52,17 @@ void Serial_Init(void)
     Buffer_int();
     MX_USART2_UART_Init();
     RS485_RE_Mode();
+}
+
+uint16_t ia = 1;
+uint16_t ib = 2;
+uint16_t ic = 3;
+
+void Modbus_Init_Reg(void) 
+{
+    Reg_MB.dual_byte_reg[0] = &ia;
+    Reg_MB.dual_byte_reg[1] = &ib;
+    Reg_MB.dual_byte_reg[2] = &ic;
 }
 
 // 接收数据的中断处理
@@ -168,7 +181,6 @@ void Modbus_OnSend_IT()
 // 定时器中断中执行
 void Modbus_Timer_Process(void)
 {
-    Cancel_last_type();
     switch (ust.task_state)
     {
     case NO_MSG:         // 无消息，正常在此状态

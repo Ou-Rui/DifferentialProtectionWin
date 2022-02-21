@@ -68,6 +68,13 @@ typedef struct
     uint8_t length;
 } struct_modbus; // 发送、接收的缓冲区
 
+typedef struct 
+{
+    uint8_t     *bit_reg[16];
+    uint16_t    *dual_byte_reg[16];
+}modbus_register;
+
+
 #define h_MAX_BUG_LEN 60 // 收发最大数据区
 
 /* USER CODE END Private defines */
@@ -76,8 +83,15 @@ typedef struct
 extern struct_modbus Recv_MB; // 接收缓冲区
 extern struct_modbus Send_MB; // 发送缓冲区
 
+extern modbus_register Reg_MB;
+
+extern uint16_t ia;
+extern uint16_t ib;
+extern uint16_t ic;
+
 void Buffer_int(void); // 初始化收发缓冲区、串口任务结构体
 void Serial_Init(void);
+void Modbus_Init_Reg(void);
 
 // 供其他模块调用的接口函数
 void Modbus_OnReceive_IT(void); // Modbus，串口中断接收到数据时调用
@@ -89,7 +103,7 @@ void Modbus_Main_Process(void);
 uint16_t CRC16(const uint8_t *pbuf, int len);
 uint8_t Parse_Typecode(uint8_t typecode);
 void Cancel_last_type(void);
-uint8_t Judge_Comm_Work1(void);
+
 void Over_Time_Pro(void);
 void Send_Ready(void);
 void Cal_Checkout_and_Send(void);

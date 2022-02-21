@@ -101,48 +101,6 @@ uint8_t Parse_Typecode(uint8_t typecode)
     return frame;
 }
 
-
-// 查看停机的执行结果
-// 本台低速启动失败判断处理	  +1表示  20mS
-// 执行条件:	启动命令持续一个固定的时间,时间到后
-//		检测执行结果
-//		执行结果正确,则撤消该信号
-//		执行结果错误,则判定为执行故障
-// 取消待执行的命令
-void Cancel_last_type(void)
-{
-    uint16_t static count = 0;
-    if (ust.last_type != 0)
-    {
-        if (++count > 500)
-        {
-            count = 0;
-            ust.last_type = 0; // 取消待执行事件
-        }
-    }
-    else
-    {
-        count = 0;
-    }
-}
-
-// 接收数据完毕，处理事件中，如分合闸复位保存参数等
-// 0表示通讯设置正常
-uint8_t Judge_Comm_Work1(void)
-{
-    // 波特率，疑问：为什么波特率=0属于正常？
-    if (Device.BaudRate == 0)
-    {
-        return 0;
-    }
-    // 控制脚如果处于发送状态，属于错误
-    if ((PAin(RS485_RE_Pin)) == 1)
-    {
-        return 1;
-    }
-    return 0;
-}
-
 // 超时处理，如果超时就复位
 void Over_Time_Pro(void)
 {
@@ -154,7 +112,7 @@ void Over_Time_Pro(void)
 }
 
 
-//接收数据的处理
+// 接收数据的处理
 void Send_Ready(void)
 {
     switch (Recv_MB.typecode)
@@ -180,7 +138,7 @@ void Send_Ready(void)
         // MOD_WRITE_S_WINDING_Pro();
         break;
     default:
-        // 接收正确
+        // 未知功能码
         return_WRONG(MOD_READ_IN, MOD_ERROR_NOCOMMAND); //对于不认识的功能码暂不处理，暂用04错误代替
         Cal_Checkout_and_Send();
         break;

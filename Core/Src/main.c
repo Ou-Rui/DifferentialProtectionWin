@@ -97,6 +97,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  Modbus_Init_Reg();
   __HAL_UART_ENABLE(&huart2);
 	__HAL_UART_ENABLE_IT(&huart2,UART_IT_RXNE);
   __HAL_UART_ENABLE(&huart1);
