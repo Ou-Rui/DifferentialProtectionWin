@@ -102,7 +102,7 @@ void MX_CAN_Init(void)
     }
   }
   // __HAL_CAN_ENABLE_IT(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
-  
+
   /*##-5- Configure Transmission process #####################################*/
   CAN_TxHeader.StdId = CAN_ID;     // 标准帧ID
   CAN_TxHeader.RTR = CAN_RTR_DATA; // 帧类型: 数据帧
